@@ -1,73 +1,33 @@
-# React + TypeScript + Vite
+# 📔 KassBuch
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Diário pessoal de desktop com visual de livro aberto — feito pra escrever em alemão, com tradução instantânea ao passar o mouse sobre qualquer palavra.
 
-Currently, two official plugins are available:
+## ✨ Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Visual de livro real**: duas páginas visíveis lado a lado (esquerda/direita), com navegação de spread em spread, como um livro físico
+- **Tradução por hover**: passe o mouse sobre qualquer palavra do texto e veja a tradução instantaneamente
+- **100% local**: sem conta, sem login, sem sincronização — todos os dados ficam no seu computador
+- **Backup manual**: exporte e importe suas entradas em `.json` quando quiser
+- **Auto-update**: o app se atualiza sozinho a cada nova versão publicada
 
-## React Compiler
+## 🛠️ Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Electron](https://www.electronjs.org/) + [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/) + [Tailwind CSS v4](https://tailwindcss.com/)
+- [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) para armazenamento local
+- [DeepL API](https://www.deepl.com/pro-api) para tradução (com fallback automático)
 
-## Expanding the ESLint configuration
+## 🚀 Rodando localmente
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📦 Status
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Em desenvolvimento ativo. Próximos passos: página de rosto, calendário visual anual, mecânica de tradução por hover e backup.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📄 Licença
+
+Projeto pessoal, sem licença de uso público definida.
