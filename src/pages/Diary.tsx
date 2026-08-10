@@ -20,6 +20,21 @@ export function addDays(dateString: string, delta: number) {
   return `${newYear}-${newMonth}-${newDay}`
 }
 
+export function getAnchorForDate(dateString: string) {
+  const [refYear, refMonth, refDay] = '2026-01-01'.split('-').map(Number)
+  const referenceUtc = Date.UTC(refYear, refMonth - 1, refDay)
+  const [year, month, day] = dateString.split('-').map(Number)
+  const targetUtc = Date.UTC(year, month - 1, day)
+  const diffDays = Math.round((targetUtc - referenceUtc) / 86400000)
+  const parity = ((diffDays % 2) + 2) % 2
+
+  if (parity === 0) {
+    return addDays(dateString, -1)
+  }
+
+  return dateString
+}
+
 function formatDateBR(dateString: string) {
   const [year, month, day] = dateString.split('-')
   return `${day}/${month}/${year}`

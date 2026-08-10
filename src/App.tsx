@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import Diary, { addDays } from './pages/Diary'
+import Diary, { getAnchorForDate } from './pages/Diary'
 import TitlePage from './pages/TitlePage'
+import TitleBar from './components/TitleBar'
 
 type View = 'home' | 'diary'
 
@@ -10,13 +11,13 @@ function App() {
   const [diaryKey, setDiaryKey] = useState(0)
 
   const handleOpenDiary = (date: string) => {
-    setTargetAnchorDate(addDays(date, -1))
+    setTargetAnchorDate(getAnchorForDate(date))
     setDiaryKey((current) => current + 1)
     setView('diary')
   }
 
   const handleOpenFirstDay = () => {
-    setTargetAnchorDate('2026-01-01')
+    setTargetAnchorDate(getAnchorForDate('2026-01-01'))
     setDiaryKey((current) => current + 1)
     setView('diary')
   }
@@ -25,16 +26,21 @@ function App() {
     setView('home')
   }
 
-  if (view === 'home') {
-    return <TitlePage onOpenDiary={handleOpenDiary} onOpenFirstDay={handleOpenFirstDay} />
-  }
-
   return (
-    <Diary
-      key={diaryKey}
-      initialAnchorDate={targetAnchorDate}
-      onNavigateHome={handleNavigateHome}
-    />
+    <div className="flex h-screen w-screen flex-col overflow-hidden">
+      <TitleBar />
+      <div className="flex-1 overflow-hidden">
+        {view === 'home' ? (
+          <TitlePage onOpenDiary={handleOpenDiary} onOpenFirstDay={handleOpenFirstDay} />
+        ) : (
+          <Diary
+            key={diaryKey}
+            initialAnchorDate={targetAnchorDate}
+            onNavigateHome={handleNavigateHome}
+          />
+        )}
+      </div>
+    </div>
   )
 }
 

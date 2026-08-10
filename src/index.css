@@ -107,3 +107,11 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-rift-500);
 }
+
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
