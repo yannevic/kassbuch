@@ -26,7 +26,7 @@ npm run dev
 
 ## 📦 Status
 
-Em desenvolvimento ativo. Próximos passos: página de rosto, calendário visual anual, mecânica de tradução por hover e backup.
+Em desenvolvimento ativo.
 
 ## 📄 Licença
 
