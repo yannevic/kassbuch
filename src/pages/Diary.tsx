@@ -43,10 +43,11 @@ function formatDateBR(dateString: string) {
 type DiaryProps = {
   initialAnchorDate?: string
   onNavigateHome: () => void
+  onOpenSettings: () => void
 }
 
 export default function Diary(props: DiaryProps) {
-  const { initialAnchorDate, onNavigateHome } = props
+  const { initialAnchorDate, onNavigateHome, onOpenSettings } = props
 
   const [anchorDate, setAnchorDate] = useState(
     initialAnchorDate ?? addDays(getTodayDateString(), -1)
@@ -216,6 +217,7 @@ export default function Diary(props: DiaryProps) {
         onNavigatePrev={handlePrevDay}
         onNavigateNext={handleNextDay}
         onNavigateHome={handleNavigateHome}
+        onOpenSettings={onOpenSettings}
         isSwitching={isSwitching}
       />
     </div>

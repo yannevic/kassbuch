@@ -74,7 +74,42 @@ app.whenReady().then(() => {
       setCachedTranslation(word, translation)
     }
   )
+  ipcMain.handle(
+    'translation:deepl',
+    async (_event, { word, apiKey }: { word: string; apiKey: string }) => {
+      const body = new URLSearchParams({
+        text: word,
+        source_lang: 'DE',
+        target_lang: 'PT-BR',
+      })
 
+      const response = await fetch('https://api-free.deepl.com/v2/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `DeepL-Auth-Key ${apiKey}`,
+        },
+        body: body.toString(),
+      })
+
+      if (response.status === 456) {
+        throw new Error('DEEPL_QUOTA_EXCEEDED')
+      }
+
+      if (!response.ok) {
+        throw new Error(`DEEPL_ERROR_${response.status}`)
+      }
+
+      const data = await response.json()
+      const translated = data?.translations?.[0]?.text
+
+      if (typeof translated !== 'string' || translated === '') {
+        throw new Error('DEEPL_EMPTY_RESPONSE')
+      }
+
+      return translated
+    }
+  )
   ipcMain.handle('settings:get', (_event, key: string) => {
     return getSetting(key)
   })

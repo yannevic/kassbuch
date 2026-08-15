@@ -77,6 +77,7 @@ export function useWordTranslation(word: string) {
           }
 
           memoryCache.set(word, result.translation)
+          console.log(`Tradução de "${word}" veio de: ${result.source}`)
 
           if (result.deeplQuotaExceeded) {
             setDeeplQuotaExceeded(true)

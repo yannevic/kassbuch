@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Languages } from 'lucide-react'
+import { Languages, Settings } from 'lucide-react'
 import HomeButton from './HomeButton'
 import WordSpan from './WordSpan'
 import SelectionTranslatePopup from './SelectionTranslatePopup'
@@ -16,6 +16,7 @@ type PageLeafProps = {
   textPageStyle: React.CSSProperties
   hiddenOnNarrow?: boolean
   onHome?: () => void
+  onSettings?: () => void
 }
 
 type SelectionState = {
@@ -38,6 +39,7 @@ export default function PageLeaf(props: PageLeafProps) {
     textPageStyle,
     hiddenOnNarrow,
     onHome,
+    onSettings,
   } = props
 
   const [isEditing, setIsEditing] = useState(false)
@@ -170,6 +172,21 @@ export default function PageLeaf(props: PageLeafProps) {
   return (
     <div className={containerClassName}>
       {onHome ? <HomeButton onClick={onHome} /> : null}
+
+      {onSettings ? (
+        <button
+          type="button"
+          onClick={onSettings}
+          aria-label="Abrir configurações"
+          className="group absolute z-10 flex h-8 w-8 items-center justify-center rounded-full outline-none transition-colors hover:bg-ink-900/10"
+          style={{ bottom: '10px', left: '10px' }}
+        >
+          <Settings
+            size={16}
+            className="text-ink-900/40 transition-colors group-hover:text-ink-900/70"
+          />
+        </button>
+      ) : null}
 
       {!isEditing && text !== '' ? (
         <button

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Settings } from 'lucide-react'
 import { getAllEntryDates, getSetting, setSetting } from '../lib/db'
 import { getTodayDateString } from './Diary'
 import YearCalendar from '../components/YearCalendar'
@@ -7,10 +7,11 @@ import YearCalendar from '../components/YearCalendar'
 type TitlePageProps = {
   onOpenDiary: (date: string) => void
   onOpenFirstDay: () => void
+  onOpenSettings: () => void
 }
 
 export default function TitlePage(props: TitlePageProps) {
-  const { onOpenDiary, onOpenFirstDay } = props
+  const { onOpenDiary, onOpenFirstDay, onOpenSettings } = props
 
   const [pertenceA, setPertenceA] = useState('')
   const [namoradaFavorita, setNamoradaFavorita] = useState('')
@@ -113,12 +114,33 @@ export default function TitlePage(props: TitlePageProps) {
     onOpenFirstDay()
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-void-950">
+        <span className="text-void-800">Carregando&hellip;</span>
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-screen w-full items-center justify-center bg-void-950 p-8">
       <div className="mx-auto flex w-full max-w-350 flex-col items-center gap-2">
         <div className="flex h-[78vh] w-full shrink-0 items-stretch">
           <div className="relative grid w-full grid-cols-1 overflow-hidden rounded-lg shadow-2xl md:grid-cols-2">
-            <div className="hidden bg-page-100 md:block" />
+            <div className="relative hidden bg-page-100 md:block">
+              <button
+                type="button"
+                onClick={onOpenSettings}
+                aria-label="Abrir configurações"
+                className="group absolute z-10 flex h-8 w-8 items-center justify-center rounded-full outline-none transition-colors hover:bg-ink-900/10"
+                style={{ bottom: '10px', left: '10px' }}
+              >
+                <Settings
+                  size={16}
+                  className="text-ink-900/40 transition-colors group-hover:text-ink-900/70"
+                />
+              </button>
+            </div>
 
             <div className="flex min-w-0 flex-col overflow-y-auto bg-page-50 p-10">
               <div className="flex flex-1 flex-col items-center gap-8 text-center">

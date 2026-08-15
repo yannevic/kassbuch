@@ -16,6 +16,7 @@ type PageViewProps = {
   onNavigatePrev: () => void
   onNavigateNext: () => void
   onNavigateHome: () => void
+  onOpenSettings: () => void
   isSwitching: boolean
 }
 
@@ -34,6 +35,7 @@ export default function PageView(props: PageViewProps) {
     onNavigatePrev,
     onNavigateNext,
     onNavigateHome,
+    onOpenSettings,
     isSwitching,
   } = props
 
@@ -62,7 +64,6 @@ export default function PageView(props: PageViewProps) {
       >
         Carregando&hellip;
       </span>
-
       <div className="flex h-[78vh] w-full shrink-0 items-stretch">
         <div className="relative flex w-full overflow-hidden rounded-lg shadow-2xl">
           <PageLeaf
@@ -75,8 +76,8 @@ export default function PageView(props: PageViewProps) {
             textPageStyle={textPageStyle}
             hiddenOnNarrow
             onHome={onNavigateHome}
+            onSettings={onOpenSettings}
           />
-
           <PageLeaf
             title={rightTitle}
             text={rightText}
@@ -86,7 +87,6 @@ export default function PageView(props: PageViewProps) {
             backgroundClassName="bg-page-50"
             textPageStyle={textPageStyle}
           />
-
           <div
             className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-6 -translate-x-1/2 md:block"
             style={{
@@ -94,7 +94,6 @@ export default function PageView(props: PageViewProps) {
                 'linear-gradient(to right, transparent, rgba(43,33,24,0.18) 45%, rgba(43,33,24,0.28) 50%, rgba(43,33,24,0.18) 55%, transparent)',
             }}
           />
-
           <button
             type="button"
             onClick={onNavigatePrev}
@@ -106,7 +105,6 @@ export default function PageView(props: PageViewProps) {
               className="text-ink-900/0 transition-colors group-hover:text-ink-900/40"
             />
           </button>
-
           <button
             type="button"
             onClick={onNavigateNext}

@@ -1,6 +1,5 @@
 import { getCachedTranslation, getSetting, setCachedTranslation } from './db'
 
-const DEEPL_API_URL = 'https://api-free.deepl.com/v2/translate'
 const MYMEMORY_API_URL = 'https://api.mymemory.translated.net/get'
 const DEEPL_API_KEY_SETTING = 'deepl_api_key'
 
@@ -13,35 +12,8 @@ export type TranslationResult = {
 }
 
 async function translateWithDeepL(word: string, apiKey: string): Promise<string> {
-  const body = new URLSearchParams({
-    auth_key: apiKey,
-    text: word,
-    source_lang: 'DE',
-    target_lang: 'PT-BR',
-  })
-
-  const response = await fetch(DEEPL_API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
-  })
-
-  if (response.status === 456) {
-    throw new Error('DEEPL_QUOTA_EXCEEDED')
-  }
-
-  if (!response.ok) {
-    throw new Error(`DEEPL_ERROR_${response.status}`)
-  }
-
-  const data = await response.json()
-  const translated = data?.translations?.[0]?.text
-
-  if (typeof translated !== 'string' || translated === '') {
-    throw new Error('DEEPL_EMPTY_RESPONSE')
-  }
-
-  return translated
+  const translated = await window.api.invoke('translation:deepl', { word, apiKey })
+  return translated as string
 }
 
 async function translateWithMyMemory(word: string): Promise<string> {
@@ -66,6 +38,22 @@ async function translateWithMyMemory(word: string): Promise<string> {
   return translated
 }
 
+export type ApiKeyTestResult = { success: true } | { success: false; reason: 'quota' | 'invalid' }
+
+export async function testDeeplApiKey(apiKey: string): Promise<ApiKeyTestResult> {
+  try {
+    await translateWithDeepL('Hallo', apiKey)
+    return { success: true }
+  } catch (error) {
+    console.error('Erro ao testar a chave do DeepL:', error)
+
+    if (error instanceof Error && error.message.includes('DEEPL_QUOTA_EXCEEDED')) {
+      return { success: false, reason: 'quota' }
+    }
+    return { success: false, reason: 'invalid' }
+  }
+}
+
 export async function translateWord(word: string): Promise<TranslationResult> {
   const cached = await getCachedTranslation(word)
 
@@ -82,7 +70,7 @@ export async function translateWord(word: string): Promise<TranslationResult> {
       await setCachedTranslation(word, translation)
       return { translation, source: 'deepl', deeplQuotaExceeded: false }
     } catch (error) {
-      if (error instanceof Error && error.message === 'DEEPL_QUOTA_EXCEEDED') {
+      if (error instanceof Error && error.message.includes('DEEPL_QUOTA_EXCEEDED')) {
         deeplQuotaExceeded = true
       }
       console.error('Erro ao traduzir com DeepL, caindo para MyMemory:', error)
