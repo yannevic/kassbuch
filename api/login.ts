@@ -6,10 +6,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  const { pin } = req.body as { pin: string }
+  const body = req.body as { pin?: string } | undefined
+  const pin = body?.pin
   const expectedPin = process.env.APP_PIN
 
-  if (typeof expectedPin !== 'string' || expectedPin === '' || pin !== expectedPin) {
+  if (
+    typeof pin !== 'string' ||
+    typeof expectedPin !== 'string' ||
+    expectedPin === '' ||
+    pin !== expectedPin
+  ) {
     res.status(401).json({ error: 'INVALID_PIN' })
     return
   }
