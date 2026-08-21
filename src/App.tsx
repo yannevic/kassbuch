@@ -4,6 +4,8 @@ import TitlePage from './pages/TitlePage'
 import TitleBar from './components/TitleBar'
 import SettingsModal from './components/SettingsModal'
 import BackupModal from './components/BackupModal'
+import PinGate from './components/PinGate'
+import { isElectron } from './lib/db'
 
 type View = 'home' | 'diary'
 
@@ -47,9 +49,9 @@ function App() {
     setIsBackupOpen(false)
   }
 
-  return (
+  const content = (
     <div className="flex h-screen w-screen flex-col overflow-hidden">
-      <TitleBar />
+      {isElectron() ? <TitleBar /> : null}
       <div className="flex-1 overflow-hidden">
         {view === 'home' ? (
           <TitlePage
@@ -66,14 +68,17 @@ function App() {
           />
         )}
       </div>
-
       {isSettingsOpen ? (
         <SettingsModal onClose={handleCloseSettings} onOpenBackup={handleOpenBackupFromSettings} />
       ) : null}
-
       {isBackupOpen ? <BackupModal onClose={handleCloseBackup} /> : null}
     </div>
   )
-}
 
+  if (isElectron()) {
+    return content
+  }
+
+  return <PinGate>{content}</PinGate>
+}
 export default App

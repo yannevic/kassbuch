@@ -5,32 +5,6 @@ const db = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN as string,
 })
 
-export async function initDb(): Promise<void> {
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS entries (
-      date TEXT PRIMARY KEY,
-      title TEXT NOT NULL DEFAULT '',
-      text TEXT NOT NULL DEFAULT '',
-      updatedAt TEXT NOT NULL
-    )
-  `)
-
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS translation_cache (
-      word TEXT PRIMARY KEY,
-      translation TEXT NOT NULL,
-      updatedAt TEXT NOT NULL
-    )
-  `)
-
-  await db.execute(`
-    CREATE TABLE IF NOT EXISTS settings (
-      key TEXT PRIMARY KEY,
-      value TEXT NOT NULL
-    )
-  `)
-}
-
 export interface DiaryEntry {
   date: string
   title: string

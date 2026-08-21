@@ -1,6 +1,8 @@
+import 'dotenv/config'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import {
+  initDb,
   getEntry,
   saveEntry,
   getAllEntryDates,
@@ -48,32 +50,35 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(() => {
-  ipcMain.handle('entries:get', (_event, date: string) => {
-    return getEntry(date)
+app.whenReady().then(async () => {
+  await initDb()
+
+  ipcMain.handle('entries:get', async (_event, date: string) => {
+    return await getEntry(date)
   })
 
   ipcMain.handle(
     'entries:save',
-    (_event, { date, title, text }: { date: string; title: string; text: string }) => {
-      return saveEntry(date, title, text)
+    async (_event, { date, title, text }: { date: string; title: string; text: string }) => {
+      return await saveEntry(date, title, text)
     }
   )
 
-  ipcMain.handle('entries:getAllDates', () => {
-    return getAllEntryDates()
+  ipcMain.handle('entries:getAllDates', async () => {
+    return await getAllEntryDates()
   })
 
-  ipcMain.handle('translation:getCached', (_event, word: string) => {
-    return getCachedTranslation(word)
+  ipcMain.handle('translation:getCached', async (_event, word: string) => {
+    return await getCachedTranslation(word)
   })
 
   ipcMain.handle(
     'translation:setCached',
-    (_event, { word, translation }: { word: string; translation: string }) => {
-      setCachedTranslation(word, translation)
+    async (_event, { word, translation }: { word: string; translation: string }) => {
+      await setCachedTranslation(word, translation)
     }
   )
+
   ipcMain.handle(
     'translation:deepl',
     async (_event, { word, apiKey }: { word: string; apiKey: string }) => {
@@ -110,31 +115,32 @@ app.whenReady().then(() => {
       return translated
     }
   )
-  ipcMain.handle('settings:get', (_event, key: string) => {
-    return getSetting(key)
+
+  ipcMain.handle('settings:get', async (_event, key: string) => {
+    return await getSetting(key)
   })
 
-  ipcMain.handle('settings:set', (_event, { key, value }: { key: string; value: string }) => {
-    setSetting(key, value)
+  ipcMain.handle('settings:set', async (_event, { key, value }: { key: string; value: string }) => {
+    await setSetting(key, value)
   })
 
-  ipcMain.handle('backup:export', () => {
+  ipcMain.handle('backup:export', async () => {
     return {
-      entries: getAllEntriesForBackup(),
-      translations: getAllTranslationsForBackup(),
+      entries: await getAllEntriesForBackup(),
+      translations: await getAllTranslationsForBackup(),
     }
   })
 
   ipcMain.handle(
     'backup:import',
-    (
+    async (
       _event,
       data: {
         entries: { date: string; title: string; text: string; updatedAt: string }[]
         translations: { word: string; translation: string; updatedAt: string }[]
       }
     ) => {
-      restoreFromBackup(data.entries, data.translations)
+      await restoreFromBackup(data.entries, data.translations)
     }
   )
 

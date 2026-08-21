@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
+    "build:web": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
     "better-sqlite3": "^11.10.0",
+    "dotenv": "^17.4.2",
     "electron-updater": "^6.0.0",
     "framer-motion": "^13.0.0",
     "lucide-react": "^1.29.0",
@@ -26,6 +29,7 @@
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "@vercel/node": "^5.10.2",
     "@vitejs/plugin-react": "^4.0.0",
     "electron": "^35.0.0",
     "electron-builder": "^24.0.0",
