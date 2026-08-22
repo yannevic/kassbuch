@@ -216,8 +216,8 @@ export default function PageLeaf(props: PageLeafProps) {
       ) : null}
 
       <div
-        className="mb-2 flex items-end gap-4 border-b-2 border-gold-400"
-        style={{ paddingLeft: '8px', paddingRight: '24px', paddingBottom: '18px' }}
+        className="mb-2 flex items-center gap-4 border-b-2 border-gold-400"
+        style={{ paddingLeft: '8px', paddingRight: '24px', paddingBottom: '12px' }}
       >
         <span className="invisible shrink-0 whitespace-nowrap font-handwriting text-lg">
           {dateLabel}
@@ -229,12 +229,8 @@ export default function PageLeaf(props: PageLeafProps) {
           placeholder="Título do dia&hellip;"
           maxLength={30}
           className="w-full flex-1 bg-transparent text-center font-handwriting text-3xl text-ink-900 placeholder-ink-900/30 outline-none"
-          style={{ transform: 'translateY(27px)' }}
         />
-        <span
-          className="shrink-0 whitespace-nowrap font-handwriting text-lg text-ink-900/60"
-          style={{ transform: 'translateY(14px)' }}
-        >
+        <span className="shrink-0 whitespace-nowrap font-handwriting text-lg text-ink-900/60">
           {dateLabel}
         </span>
       </div>
