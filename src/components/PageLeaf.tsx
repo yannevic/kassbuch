@@ -164,8 +164,8 @@ export default function PageLeaf(props: PageLeafProps) {
   }
 
   const containerClassName = hiddenOnNarrow
-    ? `relative hidden flex-1 flex-col p-10 md:flex ${backgroundClassName}`
-    : `relative flex flex-1 flex-col p-10 ${backgroundClassName}`
+    ? `relative hidden flex-1 flex-col p-4 md:flex md:p-10 ${backgroundClassName}`
+    : `relative flex flex-1 flex-col p-4 md:p-10 ${backgroundClassName}`
 
   const tokens = tokenizeText(text)
 

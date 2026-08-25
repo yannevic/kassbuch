@@ -58,14 +58,14 @@ export default function PageView(props: PageViewProps) {
   }, [lineBackgroundStyle])
 
   return (
-    <div className="relative mx-auto flex w-full max-w-350 flex-col items-center">
+    <div className="relative mx-auto flex h-full w-full max-w-350 flex-col items-center">
       <span
         className={`pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 text-sm text-rift-300 transition-opacity ${isSwitching ? 'opacity-100' : 'opacity-0'}`}
       >
         Carregando&hellip;
       </span>
-      <div className="flex h-[78vh] w-full shrink-0 items-stretch">
-        <div className="relative flex w-full overflow-hidden rounded-lg shadow-2xl">
+      <div className="flex h-full w-full shrink-0 items-stretch md:h-[78vh]">
+        <div className="relative flex w-full overflow-hidden md:rounded-lg md:shadow-2xl">
           <PageLeaf
             title={leftTitle}
             text={leftText}

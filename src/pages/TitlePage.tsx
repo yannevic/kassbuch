@@ -116,17 +116,17 @@ export default function TitlePage(props: TitlePageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-void-950">
+      <div className="flex h-full w-full items-center justify-center bg-void-950">
         <span className="text-void-800">Carregando&hellip;</span>
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-void-950 p-8">
-      <div className="mx-auto flex w-full max-w-350 flex-col items-center gap-2">
-        <div className="flex h-[78vh] w-full shrink-0 items-stretch">
-          <div className="relative grid w-full grid-cols-1 overflow-hidden rounded-lg shadow-2xl md:grid-cols-2">
+    <div className="flex h-full w-full justify-center bg-void-950 p-0 md:p-8">
+      <div className="mx-auto flex h-full w-full max-w-350 flex-col items-center gap-2">
+        <div className="flex h-full w-full shrink-0 items-stretch md:h-[78vh]">
+          <div className="relative grid w-full grid-cols-1 overflow-hidden md:grid-cols-2 md:rounded-lg md:shadow-2xl">
             <div className="relative hidden bg-page-100 md:block">
               <button
                 type="button"
@@ -142,8 +142,8 @@ export default function TitlePage(props: TitlePageProps) {
               </button>
             </div>
 
-            <div className="flex min-w-0 flex-col overflow-y-auto bg-page-50 p-10">
-              <div className="flex flex-1 flex-col items-center gap-8 text-center">
+            <div className="flex min-w-0 flex-col overflow-y-auto bg-page-50 p-4 md:p-10">
+              <div className="flex flex-1 flex-col items-center gap-4 text-center md:gap-8">
                 <div className="flex flex-col items-center gap-2">
                   <span className="font-handwriting text-lg text-ink-900/70">
                     Este diário pertence a:
@@ -154,7 +154,7 @@ export default function TitlePage(props: TitlePageProps) {
                     onChange={(event) => setPertenceA(event.target.value)}
                     placeholder="seu nome aqui&hellip;"
                     maxLength={40}
-                    className="w-full max-w-xs border-b-2 border-gold-400 bg-transparent text-center font-handwriting text-2xl text-ink-900 placeholder-ink-900/30 outline-none"
+                    className="w-full max-w-xs border-b-2 border-gold-400 bg-transparent text-center font-handwriting text-xl text-ink-900 placeholder-ink-900/30 outline-none md:text-2xl"
                   />
                 </div>
 
@@ -168,7 +168,7 @@ export default function TitlePage(props: TitlePageProps) {
                     onChange={(event) => setNamoradaFavorita(event.target.value)}
                     placeholder="o nome dela aqui&hellip;"
                     maxLength={40}
-                    className="w-full max-w-xs border-b-2 border-gold-400 bg-transparent text-center font-handwriting text-2xl text-ink-900 placeholder-ink-900/30 outline-none"
+                    className="w-full max-w-xs border-b-2 border-gold-400 bg-transparent text-center font-handwriting text-xl text-ink-900 placeholder-ink-900/30 outline-none md:text-2xl"
                   />
                 </div>
 
