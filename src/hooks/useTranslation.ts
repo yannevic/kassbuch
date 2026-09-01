@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { translateWord } from '../lib/translate'
+import { translateWord, subscribeToLastSource, getLastSourceSnapshot } from '../lib/translate'
+import type { TranslationSource } from '../lib/translate'
 
 type TranslationState = {
   translation: string
@@ -35,6 +36,10 @@ function getQuotaSnapshot() {
 
 export function useDeeplQuotaExceeded(): boolean {
   return useSyncExternalStore(subscribeToQuota, getQuotaSnapshot)
+}
+
+export function useLastTranslationSource(): TranslationSource | null {
+  return useSyncExternalStore(subscribeToLastSource, getLastSourceSnapshot)
 }
 
 export function useWordTranslation(word: string) {

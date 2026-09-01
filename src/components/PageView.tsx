@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import PageLeaf from './PageLeaf'
+import { useLastTranslationSource } from '../hooks/useTranslation'
 
 type PageViewProps = {
   leftTitle: string
@@ -38,7 +39,7 @@ export default function PageView(props: PageViewProps) {
     onOpenSettings,
     isSwitching,
   } = props
-
+  const lastTranslationSource = useLastTranslationSource()
   const lineBackgroundStyle = useMemo(() => {
     return {
       backgroundImage:
@@ -64,6 +65,16 @@ export default function PageView(props: PageViewProps) {
       >
         Carregando&hellip;
       </span>
+      {lastTranslationSource ? (
+        <span className="pointer-events-none absolute -top-6 right-0 font-sans text-xs text-page-50/40">
+          Tradução:{' '}
+          {lastTranslationSource === 'deepl'
+            ? 'DeepL'
+            : lastTranslationSource === 'mymemory'
+              ? 'MyMemory'
+              : 'cache'}
+        </span>
+      ) : null}
       <div className="flex h-full w-full shrink-0 items-stretch md:h-[78vh]">
         <div className="relative flex w-full overflow-hidden md:rounded-lg md:shadow-2xl">
           <PageLeaf

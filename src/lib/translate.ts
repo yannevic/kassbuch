@@ -1,4 +1,10 @@
-import { getCachedTranslation, getSetting, setCachedTranslation } from './db'
+import {
+  getCachedTranslation,
+  getSetting,
+  setCachedTranslation,
+  isElectron,
+  PIN_STORAGE_KEY,
+} from './db'
 
 const MYMEMORY_API_URL = 'https://api.mymemory.translated.net/get'
 const DEEPL_API_KEY_SETTING = 'deepl_api_key'
@@ -11,9 +17,52 @@ export type TranslationResult = {
   deeplQuotaExceeded: boolean
 }
 
+let lastSource: TranslationSource | null = null
+const sourceListeners = new Set<() => void>()
+
+function setLastSource(source: TranslationSource) {
+  lastSource = source
+  sourceListeners.forEach((listener) => listener())
+}
+
+export function subscribeToLastSource(listener: () => void) {
+  sourceListeners.add(listener)
+  return () => {
+    sourceListeners.delete(listener)
+  }
+}
+
+export function getLastSourceSnapshot(): TranslationSource | null {
+  return lastSource
+}
+
 async function translateWithDeepL(word: string, apiKey: string): Promise<string> {
-  const translated = await window.api.invoke('translation:deepl', { word, apiKey })
-  return translated as string
+  if (isElectron()) {
+    const translated = await window.api.invoke('translation:deepl', { word, apiKey })
+    return translated as string
+  }
+
+  const pin = typeof window !== 'undefined' ? window.localStorage.getItem(PIN_STORAGE_KEY) : null
+
+  const response = await fetch('/api/translate-deepl', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(pin ? { 'X-App-Pin': pin } : {}),
+    },
+    body: JSON.stringify({ word, apiKey }),
+  })
+
+  if (response.status === 456) {
+    throw new Error('DEEPL_QUOTA_EXCEEDED')
+  }
+
+  if (!response.ok) {
+    throw new Error(`DEEPL_ERROR_${response.status}`)
+  }
+
+  const data = await response.json()
+  return data.translation as string
 }
 
 async function translateWithMyMemory(word: string): Promise<string> {
@@ -56,8 +105,8 @@ export async function testDeeplApiKey(apiKey: string): Promise<ApiKeyTestResult>
 
 export async function translateWord(word: string): Promise<TranslationResult> {
   const cached = await getCachedTranslation(word)
-
   if (cached !== undefined) {
+    setLastSource('cache')
     return { translation: cached, source: 'cache', deeplQuotaExceeded: false }
   }
 
@@ -68,6 +117,7 @@ export async function translateWord(word: string): Promise<TranslationResult> {
     try {
       const translation = await translateWithDeepL(word, apiKey)
       await setCachedTranslation(word, translation)
+      setLastSource('deepl')
       return { translation, source: 'deepl', deeplQuotaExceeded: false }
     } catch (error) {
       if (error instanceof Error && error.message.includes('DEEPL_QUOTA_EXCEEDED')) {
@@ -79,6 +129,6 @@ export async function translateWord(word: string): Promise<TranslationResult> {
 
   const fallbackTranslation = await translateWithMyMemory(word)
   await setCachedTranslation(word, fallbackTranslation)
-
+  setLastSource('mymemory')
   return { translation: fallbackTranslation, source: 'mymemory', deeplQuotaExceeded }
 }
