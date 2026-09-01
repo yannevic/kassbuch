@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react'
 import PageLeaf from './PageLeaf'
-import { useLastTranslationSource } from '../hooks/useTranslation'
+import { useLastTranslationSource, useDeeplQuotaExceeded } from '../hooks/useTranslation'
 
 type PageViewProps = {
   leftTitle: string
@@ -40,6 +40,7 @@ export default function PageView(props: PageViewProps) {
     isSwitching,
   } = props
   const lastTranslationSource = useLastTranslationSource()
+  const quotaExceeded = useDeeplQuotaExceeded()
   const lineBackgroundStyle = useMemo(() => {
     return {
       backgroundImage:
@@ -65,6 +66,12 @@ export default function PageView(props: PageViewProps) {
       >
         Carregando&hellip;
       </span>
+      {quotaExceeded ? (
+        <span className="pointer-events-none absolute -top-6 left-0 flex items-center gap-1 font-sans text-xs text-amber-400">
+          <AlertTriangle size={12} />
+          Modo econômico — cota do DeepL esgotada
+        </span>
+      ) : null}
       {lastTranslationSource ? (
         <span className="pointer-events-none absolute -top-6 right-0 font-sans text-xs text-page-50/40">
           Tradução:{' '}

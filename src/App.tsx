@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Diary, { getAnchorForDate } from './pages/Diary'
 import TitlePage from './pages/TitlePage'
 import TitleBar from './components/TitleBar'
@@ -7,6 +7,7 @@ import BackupModal from './components/BackupModal'
 import PinGate from './components/PinGate'
 import MobileNavBar from './components/MobileNavBar'
 import { isElectron } from './lib/db'
+import { loadPersistedQuotaExceeded } from './lib/translate'
 
 type View = 'home' | 'diary'
 
@@ -16,6 +17,12 @@ function App() {
   const [diaryKey, setDiaryKey] = useState(0)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isBackupOpen, setIsBackupOpen] = useState(false)
+
+  useEffect(() => {
+    loadPersistedQuotaExceeded().catch((error) => {
+      console.error('Erro ao carregar estado de cota da DeepL:', error)
+    })
+  }, [])
 
   const handleOpenDiary = (date: string) => {
     setTargetAnchorDate(getAnchorForDate(date))

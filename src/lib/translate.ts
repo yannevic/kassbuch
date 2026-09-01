@@ -2,12 +2,14 @@ import {
   getCachedTranslation,
   getSetting,
   setCachedTranslation,
+  setSetting,
   isElectron,
   PIN_STORAGE_KEY,
 } from './db'
 
 const MYMEMORY_API_URL = 'https://api.mymemory.translated.net/get'
 const DEEPL_API_KEY_SETTING = 'deepl_api_key'
+const DEEPL_QUOTA_EXCEEDED_SETTING = 'deepl_quota_exceeded'
 
 export type TranslationSource = 'cache' | 'deepl' | 'mymemory'
 
@@ -34,6 +36,35 @@ export function subscribeToLastSource(listener: () => void) {
 
 export function getLastSourceSnapshot(): TranslationSource | null {
   return lastSource
+}
+
+let quotaExceeded = false
+const quotaListeners = new Set<() => void>()
+
+function setQuotaExceededState(value: boolean) {
+  if (quotaExceeded === value) {
+    return
+  }
+  quotaExceeded = value
+  quotaListeners.forEach((listener) => listener())
+}
+
+export function subscribeToQuotaExceeded(listener: () => void) {
+  quotaListeners.add(listener)
+  return () => {
+    quotaListeners.delete(listener)
+  }
+}
+
+export function getQuotaExceededSnapshot(): boolean {
+  return quotaExceeded
+}
+
+export async function loadPersistedQuotaExceeded(): Promise<void> {
+  const stored = await getSetting(DEEPL_QUOTA_EXCEEDED_SETTING)
+  if (stored === 'true') {
+    setQuotaExceededState(true)
+  }
 }
 
 async function translateWithDeepL(word: string, apiKey: string): Promise<string> {
@@ -95,7 +126,6 @@ export async function testDeeplApiKey(apiKey: string): Promise<ApiKeyTestResult>
     return { success: true }
   } catch (error) {
     console.error('Erro ao testar a chave do DeepL:', error)
-
     if (error instanceof Error && error.message.includes('DEEPL_QUOTA_EXCEEDED')) {
       return { success: false, reason: 'quota' }
     }
@@ -118,10 +148,18 @@ export async function translateWord(word: string): Promise<TranslationResult> {
       const translation = await translateWithDeepL(word, apiKey)
       await setCachedTranslation(word, translation)
       setLastSource('deepl')
+
+      if (quotaExceeded) {
+        setQuotaExceededState(false)
+        setSetting(DEEPL_QUOTA_EXCEEDED_SETTING, 'false').catch(() => {})
+      }
+
       return { translation, source: 'deepl', deeplQuotaExceeded: false }
     } catch (error) {
       if (error instanceof Error && error.message.includes('DEEPL_QUOTA_EXCEEDED')) {
         deeplQuotaExceeded = true
+        setQuotaExceededState(true)
+        setSetting(DEEPL_QUOTA_EXCEEDED_SETTING, 'true').catch(() => {})
       }
       console.error('Erro ao traduzir com DeepL, caindo para MyMemory:', error)
     }

@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { translateWord, subscribeToLastSource, getLastSourceSnapshot } from '../lib/translate'
+import {
+  translateWord,
+  subscribeToLastSource,
+  getLastSourceSnapshot,
+  subscribeToQuotaExceeded,
+  getQuotaExceededSnapshot,
+} from '../lib/translate'
 import type { TranslationSource } from '../lib/translate'
 
 type TranslationState = {
@@ -12,30 +18,8 @@ const HOVER_DEBOUNCE_MS = 300
 
 const memoryCache = new Map<string, string>()
 
-let deeplQuotaExceeded = false
-const quotaListeners = new Set<() => void>()
-
-function setDeeplQuotaExceeded(value: boolean) {
-  if (deeplQuotaExceeded === value) {
-    return
-  }
-  deeplQuotaExceeded = value
-  quotaListeners.forEach((listener) => listener())
-}
-
-function subscribeToQuota(listener: () => void) {
-  quotaListeners.add(listener)
-  return () => {
-    quotaListeners.delete(listener)
-  }
-}
-
-function getQuotaSnapshot() {
-  return deeplQuotaExceeded
-}
-
 export function useDeeplQuotaExceeded(): boolean {
-  return useSyncExternalStore(subscribeToQuota, getQuotaSnapshot)
+  return useSyncExternalStore(subscribeToQuotaExceeded, getQuotaExceededSnapshot)
 }
 
 export function useLastTranslationSource(): TranslationSource | null {
@@ -82,12 +66,6 @@ export function useWordTranslation(word: string) {
           }
 
           memoryCache.set(word, result.translation)
-          console.log(`Tradução de "${word}" veio de: ${result.source}`)
-
-          if (result.deeplQuotaExceeded) {
-            setDeeplQuotaExceeded(true)
-          }
-
           setState({ translation: result.translation, isLoading: false, error: false })
         })
         .catch((error) => {

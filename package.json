@@ -46,8 +46,8 @@
     "vite-plugin-pwa": "^1.3.0"
   },
   "build": {
-    "appId": "com.template.desktop",
-    "productName": "Template Desktop",
+    "appId": "com.kassbuch.diario",
+    "productName": "KassBuch",
     "directories": {
       "output": "release"
     },
@@ -60,7 +60,7 @@
       "target": "dmg"
     },
     "win": {
-      "icon": "assets/icon.png",
+      "icon": "assets/icon.ico",
       "target": "nsis"
     },
     "linux": {
